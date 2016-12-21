@@ -18,7 +18,11 @@ function writePackageJson(options) {
     const packageJson = {
         name: options.name,
         version: '0.1.0',
-        private: true
+        private: true,
+        scripts: {
+            start: 'NODE_ENV=development webpack-dashboard -- lycaon-dev-server',
+            build: 'NODE_ENV=production webpack'
+        }
     };
 
     return fs.writeFile(path.join(options.root, 'package.json'), JSON.stringify(packageJson, null, 4));
