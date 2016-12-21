@@ -1,19 +1,18 @@
 // Based on create-react-app
-
 import chalk from 'chalk';
-
-const nodeVersion = process.versions.node;
-if (nodeVersion.split('.')[0] < 4) {
-    console.error(chalk.red(`You are using Node ${nodeVersion}, but lycaon requires Node 4 or higher.`));
-    process.exit(1);
-}
-
+import deps from './packages';
 import promisify from 'promisify-node';
 const fs = promisify(require('fs-extra'));
 import { execSync } from 'child_process';
 import Handlebars from 'handlebars';
 import path from 'path'
 import spawn from 'cross-spawn';
+
+const nodeVersion = process.versions.node;
+if (nodeVersion.split('.')[0] < 4) {
+    console.error(chalk.red(`You are using Node ${nodeVersion}, but lycaon requires Node 4 or higher.`));
+    process.exit(1);
+}
 
 function writePackageJson(options) {
     const packageJson = {
@@ -58,12 +57,19 @@ async function transferFile(srcRoot, src, srcStats, destRoot, options) {
     }
 }
 
-function copyTemplate(options) {
+function copyStencil(options) {
     const templateRoot = path.join(__dirname, '..', 'template');
-    fs.walk(templateRoot)
-        .on('data', ({ path: file, stats }) => {
-            transferFile(templateRoot, file, stats, options.root, options);
-        });
+
+    return new Promise((resolve, reject) => {
+        const promises = [];
+        fs.walk(templateRoot)
+            .on('data', ({ path: file, stats }) => {
+                promises.push(transferFile(templateRoot, file, stats, options.root, options));
+            })
+            .on('end', () => {
+                resolve(Promise.all(promises));
+            });
+    });
 }
 
 function installPackages(packageSpecs, dev, verbose) {
@@ -85,6 +91,13 @@ function installPackages(packageSpecs, dev, verbose) {
     });
 }
 
+function processError({ code, command, args }) {
+    if (code !== 0) {
+        console.error(`${chalk.cyan(command)} ${chalk.cyan(args.join(' '))} ${chalk.red('failed')}`);
+        process.exit(1);
+    }
+}
+
 export default async function scaffold(options) {
     if (! await isEmptyIsh(options.root)) {
         console.error(`The directory ${chalk.green(options.name)} contains conflicting files`);
@@ -93,13 +106,10 @@ export default async function scaffold(options) {
 
     await writePackageJson(options);
 
-    copyTemplate(options);
+    await copyStencil(options);
 
-    // const { code, command, args } = await installPackages(['webpack@^2.2.0-rc.1'], true, options.verbose);
-    // if (code !== 0) {
-        // console.error(`${chalk.cyan(command + ' ' + args.join(' '))} failed`);
-        // process.exit(1);
-    // }
+    await installPackages(deps.devDependencies, true, options.verbose).then(processError);
+    await installPackages(deps.dependencies, false, options.verbose).then(processError);
 }
 
 async function isEmptyIsh(root) {
