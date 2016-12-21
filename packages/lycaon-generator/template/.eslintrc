@@ -1,41 +1,4 @@
 {
-    "extends": ["airbnb"],
-    "env": {
-        "browser": true,
-        "commonjs": true,
-        "shared-node-browser": true
-    },
-    "plugins": [
-        "unicorn"
-    ],
-    "rules": {
-        "indent": ["error", 4, {
-            "SwitchCase": 1,
-            "VariableDeclarator": 1,
-            "outerIIFEBody": 1,
-            "FunctionDeclaration": {
-                "parameters": 1,
-                "body": 1
-            },
-            "FunctionExpression": {
-                "parameters": 1,
-                "body": 1
-            }
-        }],
-
-        "import/no-nodejs-modules": "error",
-
-        "unicorn/explicit-length-check": "error",
-        "unicorn/filename-case": ["error", {"case": "pascalCase"}], # For React components
-        "unicorn/no-abusive-eslint-disable": "error",
-        "unicorn/no-process-exit": "error",
-        "unicorn/throw-new-error": "error",
-        "unicorn/number-literal-case": "error",
-        "unicorn/escape-case": "error",
-        "unicorn/no-array-instanceof": "error",
-        "unicorn/no-new-buffer": "error",
-        "unicorn/no-hex-escape": "error",
-        "unicorn/custom-error-definition": "error"
-    },
+    "extends": ["lycaon"],
     "root": true
 }
