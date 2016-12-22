@@ -12,7 +12,7 @@ module.exports = {
         'flowtype',
         'import',
         'jsx-a11y',
-        'react'
+        'react',
         'unicorn',
     ],
 
@@ -26,7 +26,7 @@ module.exports = {
             generators: true,
             experimentalObjectRestSpread: true,
         }
-    }
+    },
 
     rules: {
         indent: ['error', 4, {
@@ -43,6 +43,8 @@ module.exports = {
             },
         }],
 
+        'react/jsx-indent': ['error', 4],
+
         'import/no-nodejs-modules': 'error',
 
         'unicorn/explicit-length-check': 'error',
@@ -51,19 +53,20 @@ module.exports = {
         'unicorn/no-abusive-eslint-disable': 'error',
         'unicorn/no-process-exit': 'error',
         'unicorn/throw-new-error': 'error',
-        'unicorn/number-literal-case': 'error',
-        'unicorn/escape-case': 'error',
-        'unicorn/no-array-instanceof': 'error',
-        'unicorn/no-new-buffer': 'error',
-        'unicorn/no-hex-escape': 'error',
-        'unicorn/custom-error-definition': 'error',
+        // Some not published yet
+        // 'unicorn/number-literal-case': 'error',
+        // 'unicorn/escape-case': 'error',
+        // 'unicorn/no-array-instanceof': 'error',
+        // 'unicorn/no-new-buffer': 'error',
+        // 'unicorn/no-hex-escape': 'error',
+        // 'unicorn/custom-error-definition': 'error',
 
-        'flowtype/boolean-style': 'error'
+        'flowtype/boolean-style': 'error',
         'flowtype/delimiter-dangle': ['error', 'always-multiline'],
         'flowtype/define-flow-type': 'warn',
-        'flowtype/require-valid-file-annotation': 'error',
+        'flowtype/require-valid-file-annotation': ['error', 'always'],
         'flowtype/require-parameter-type': ['warn', { excludeArrowFunctions: true }],
-        'flowtype/require-return-type': ['warn', { excludeArrowFunctions: true }]
+        'flowtype/require-return-type': ['warn', { excludeArrowFunctions: true }],
         'flowtype/use-flow-type': 'warn'
     },
 };

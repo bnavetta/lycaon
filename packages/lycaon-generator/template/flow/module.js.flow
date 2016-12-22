@@ -1,0 +1,9 @@
+declare interface Hot {
+	accept(dep: string, callback: () => void): void;
+}
+
+declare interface Module {
+	hot: Hot;
+}
+
+declare var module: Module;

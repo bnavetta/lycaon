@@ -1,0 +1,4 @@
+// @flow
+
+// CSS modules export an object of class names
+declare export default { [key: string]: string }

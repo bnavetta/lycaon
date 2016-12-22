@@ -1,13 +1,14 @@
 export default {
     devDependencies: [
-        "webpack@^2.2.0-rc.1",
-        "eslint-config-lycaon",
         "babel-preset-lycaon",
-        "lycaon-config",
+        "lycaon-build",
+        "stylelint-config-lycaon",
+        "webpack-dashboard"
     ],
 
     dependencies: [
         "react",
-        "react-dom"
+        "react-dom",
+        "react-hot-loader@^3.0.0-beta.6"
     ]
 };

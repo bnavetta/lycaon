@@ -15,7 +15,7 @@ module.exports = {
             'border',
             'font',
             'color',
-            'background'
+            'background',
             'transform',
         ], { unspecified: "bottomAlphabetical" }],
 
@@ -25,6 +25,5 @@ module.exports = {
         'property-no-vendor-prefix': true,
         'selector-no-vendor-prefix': true,
         'value-no-vendor-prefix': true,
-        
-    }
-}
+    },
+};

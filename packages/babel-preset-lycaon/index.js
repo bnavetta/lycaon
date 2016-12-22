@@ -7,8 +7,8 @@ module.exports = {
             },
             modules: false
         }],
-        require.resolve('stage-0'),
-    ]
+        require.resolve('babel-preset-stage-0'),
+    ],
     plugins: [
         require.resolve('react-hot-loader/babel'),
         // TODO: regenerator??
@@ -29,7 +29,7 @@ module.exports = {
                 }],
             ],
             plugins: [
-                require.resolve('babel-plugin-transform-es2015-parameters')
+                require.resolve('babel-plugin-transform-es2015-parameters'),
                 require.resolve('babel-plugin-transform-react-jsx-source'),
                 require.resolve('babel-plugin-transform-react-jsx-self'),
             ]

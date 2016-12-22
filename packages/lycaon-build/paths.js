@@ -13,5 +13,6 @@ module.exports = {
     src: resolve('src'),
     entryFile: resolve('src/index.jsx'),
     htmlTemplate: resolve('src/index.html'),
-    nodeModules: resolve('node_modules')
+    nodeModules: resolve('node_modules'),
+    ownNodeModules: path.resolve(__dirname, 'node_modules')
 };

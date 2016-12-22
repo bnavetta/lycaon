@@ -20,8 +20,8 @@ function writePackageJson(options) {
         version: '0.1.0',
         private: true,
         scripts: {
-            start: 'NODE_ENV=development webpack-dashboard -- lycaon-dev-server',
-            build: 'NODE_ENV=production webpack'
+            start: 'webpack-dashboard -- lycaon-build start',
+            build: 'lycaon-build build'
         }
     };
 

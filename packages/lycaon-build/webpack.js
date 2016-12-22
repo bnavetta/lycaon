@@ -2,7 +2,8 @@ const webpack = require('webpack');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ManifestPlugin = require('webpack-manifest-plugin');
-const StyleLintPlugin = requirE('stylelint-webpack-plugin');
+const StyleLintPlugin = require('stylelint-webpack-plugin');
+const FlowStatusWebpackPlugin = require('flow-status-webpack-plugin');
 
 const paths = require('./paths');
 
@@ -11,11 +12,33 @@ const isProd = process.env.NODE_ENV === 'production';
 function cssLoader() {
     if (isProd) {
         return ExtractTextPlugin.extract({
-            notExtractLoader: 'style-loader',
-            loader: 'css-loader?localIdentName=[hash:base64:16]&modules&importLoaders=1!postcss-loader'
+            fallback: 'style-loader',
+            loader: [
+                {
+                    loader: 'css-loader',
+                    options: {
+                        localIdentName: '[hash:base64:16]',
+                        modules: true,
+                        importLoaders: 1
+                    },
+                },
+                { loader: 'postcss-loader' }
+            ]
         });
     } else {
-        return 'style-loader!css-loader?importLoaders=1&modules&sourceMap&localIdentName=[local]__[path][name]!postcss-loader';
+        return [
+            { loader: 'style-loader' },
+            {
+                loader: 'css-loader',
+                options: {
+                    modules: true,
+                    sourceMap: true,
+                    localIdentName: '[local]__[path][name]',
+                    importLoaders: 1,
+                },
+            },
+            { loader: 'postcss-loader' },
+        ];
     }
 }
 
@@ -23,7 +46,6 @@ function plugins() {
     if (isProd) {
         return [
             new webpack.optimize.AggressiveMergingPlugin(),
-            new webpack.optimize.DedupePlugin(),
             new webpack.optimize.UglifyJsPlugin({
                 compress: {
                     screw_ie8: true,
@@ -45,6 +67,7 @@ function plugins() {
             new ManifestPlugin({
                 filename: 'asset-manifest.json',
             }),
+            new webpack.NoErrorsPlugin(),
         ]
     } else {
         return [
@@ -114,25 +137,28 @@ module.exports = {
     bail: isProd,
     devtool: isProd ? 'source-map' : 'cheap-module-source-map',
 
+    entry: entry(),
     output: output(),
 
     module: {
-        preLoaders: [
+        rules: [
             {
                 test: /\.jsx?$/,
-                loader: 'eslint-loader',
+                use: { loader: 'eslint-loader' },
                 include: paths.src,
-            }
-        ],
+                enforce: 'pre',
+            },
 
-        loaders: [
             {
                 test: /\.jsx?$/,
-                loader: 'babel-loader',
+                use: {
+                    loader: 'babel-loader',
+                    options: {
+                        presets: 'lycaon',
+                        cacheDirectory: true,
+                    },
+                },
                 include: paths.src,
-                query: {
-                    cacheDirectory: true,
-                }
             },
 
             {
@@ -142,7 +168,7 @@ module.exports = {
 
             {
                 test: /\.json$/,
-                loader: 'json-loadder'
+                use: { loader: 'json-loadder' },
             },
 
             {
@@ -152,24 +178,37 @@ module.exports = {
                     /\.css$/,
                     /\.json$/,
                 ],
-                loader: 'url-loader',
-                query: {
-                    limit: 10000,
-                    name: '[path][name].[hash:32].[ext]'
-                }
+                use: {
+                    loader: 'url-loader',
+                    options: {
+                        limit: 10000,
+                        name: '[path][name].[hash:32].[ext]'
+                    },
+                },
             }
         ]
     },
 
     resolve: {
-        extensions: ['', '.js', '.jsx', '.json'],
+        extensions: ['.js', '.jsx', '.json'],
         modules: [paths.src, paths.nodeModules]
+    },
+
+    resolveLoader: {
+        modules: [paths.ownNodeModules, paths.nodeModules],
     },
 
     plugins: [
         new StyleLintPlugin(),
+        new FlowStatusWebpackPlugin({
+            failOnError: isProd,
+            onError: function (stdout) {
+                if (!isProd) { // failOnError logs it anyways
+                    console.log(stdout);
+                }
+            },
+        }),
         new HtmlWebpackPlugin(htmlPlugin()),
-        new webpack.NoErrorsPlugin(),
         new webpack.DefinePlugin({
             'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV)
         }),

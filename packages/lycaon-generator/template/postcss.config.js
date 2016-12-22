@@ -1,5 +1,5 @@
-module.exports = (ctx) => ({
-    plugins: {
-        'lycaon-config/postcss': {},
-    },
-});
+module.exports = {
+    plugins: [
+        require('lycaon-build/postcss')()
+    ],
+};
