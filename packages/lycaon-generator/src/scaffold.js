@@ -20,8 +20,9 @@ function writePackageJson(options) {
         version: '0.1.0',
         private: true,
         scripts: {
-            start: 'webpack-dashboard -- lycaon-build start',
-            build: 'lycaon-build build'
+            start: 'lycaon-build dashboard',
+            build: 'lycaon-build build',
+            test: 'lycaon-build test --env=jsdom'
         }
     };
 

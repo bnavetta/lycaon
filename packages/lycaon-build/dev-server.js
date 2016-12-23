@@ -8,6 +8,7 @@ const webpackDevMiddleware = require('webpack-dev-middleware');
 const webpackHotMiddleware = require('webpack-hot-middleware');
 const webpackConfig = require('./webpack');
 const DashboardPlugin = require('webpack-dashboard/plugin');
+const Dashboard = require
 
 function start() {
     const app = express();
@@ -41,7 +42,7 @@ function start() {
             return;
         }
 
-        console.log('App started on ' + chalk.cyan(port));
+        console.log('App started on ' + chalk.cyan('http://localhost:' + port));
     });
 }
 

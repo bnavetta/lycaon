@@ -1,13 +1,16 @@
 const webpack = require('webpack');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const ManifestPlugin = require('webpack-manifest-plugin');
 const StyleLintPlugin = require('stylelint-webpack-plugin');
 const FlowStatusWebpackPlugin = require('flow-status-webpack-plugin');
+const _ = require('lodash');
 
 const paths = require('./paths');
+const config = require('./config');
+const AssetManifestPlugin = require('./AssetManifestPlugin');
 
 const isProd = process.env.NODE_ENV === 'production';
+const isDev = process.env.NODE_ENV === 'development';
 
 function cssLoader() {
     if (isProd) {
@@ -16,7 +19,7 @@ function cssLoader() {
             loader: [
                 {
                     loader: 'css-loader',
-                    options: {
+                    query: {
                         localIdentName: '[hash:base64:16]',
                         modules: true,
                         importLoaders: 1
@@ -30,7 +33,7 @@ function cssLoader() {
             { loader: 'style-loader' },
             {
                 loader: 'css-loader',
-                options: {
+                query: {
                     modules: true,
                     sourceMap: true,
                     localIdentName: '[local]__[path][name]',
@@ -63,9 +66,6 @@ function plugins() {
                 filename: '[name].[contenthash].css',
                 disable: false,
                 allChunks: true,
-            }),
-            new ManifestPlugin({
-                filename: 'asset-manifest.json',
             }),
             new webpack.NoErrorsPlugin(),
         ]
@@ -120,18 +120,17 @@ function output() {
 }
 
 function entry() {
-    if (isProd) {
-        return [paths.entryFile];
-    } else {
-        return [
-            'react-hot-loader/patch',
-            'webpack-hot-middleware/client',
-            paths.entryFile,
-        ];
+    let entryBase = [];
+    if (isDev) {
+        entryBase.push('react-hot-loader/patch', 'webpack-hot-middleware/client')
     }
+
+    return _.mapValues(config.entry, function (entry) {
+        return _.concat(entryBase, entry);
+    });
 }
 
-module.exports = {
+const baseConfig = {
     context: paths.root,
 
     bail: isProd,
@@ -213,6 +212,12 @@ module.exports = {
             'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV)
         }),
         new webpack.optimize.OccurrenceOrderPlugin(),
+        new AssetManifestPlugin({
+            emitToFile: isDev,
+        }),
+        new webpack.optimize.CommonsChunkPlugin({
+            name: 'common'
+        }),
         new webpack.LoaderOptionsPlugin({
             minimize: isProd,
             debug: !isProd,
@@ -224,4 +229,10 @@ module.exports = {
         net: 'empty',
         tls: 'empty'
     }
+};
+
+if (config.customizeWebpack) {
+    module.exports = config.customizeWebpack(baseConfig);
+} else {
+    module.exports = baseConfig;
 }

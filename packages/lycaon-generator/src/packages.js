@@ -1,9 +1,9 @@
 export default {
     devDependencies: [
-        "babel-preset-lycaon",
         "lycaon-build",
         "stylelint-config-lycaon",
-        "webpack-dashboard"
+        "react-test-renderer",
+        "webpack@^2.2.0-rc.1" // TODO: needed?
     ],
 
     dependencies: [

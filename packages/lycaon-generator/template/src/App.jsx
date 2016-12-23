@@ -1,5 +1,7 @@
 import React from 'react';
 
+import styles from './App.css';
+
 export default class App extends React.Component {
     componentDidMount() {
         console.log('Component mounted');
@@ -7,7 +9,7 @@ export default class App extends React.Component {
 
     render() {
         return (
-            <h1>Hello, World!</h1>
+            <h1 className={styles.app}>Hello, World!</h1>
         );
     }
 }

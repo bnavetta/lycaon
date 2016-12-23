@@ -11,8 +11,10 @@ module.exports = {
     root: rootDirectory,
     dist: resolve('dist'),
     src: resolve('src'),
+    config: resolve('lycaon.config.js'),
     entryFile: resolve('src/index.jsx'),
     htmlTemplate: resolve('src/index.html'),
+    testSetup: resolve('src/testSetup.js'),
     nodeModules: resolve('node_modules'),
     ownNodeModules: path.resolve(__dirname, 'node_modules')
 };
