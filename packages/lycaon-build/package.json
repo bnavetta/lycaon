@@ -15,7 +15,7 @@
     "del": "^2.2.2",
     "eslint": "^3.12.2",
     "eslint-config-airbnb": "^13.0.0",
-    "eslint-config-lycaon": "^0.1.1",
+    "eslint-config-lycaon": "^0.2.1",
     "eslint-loader": "^1.6.1",
     "eslint-plugin-flowtype": "^2.29.1",
     "eslint-plugin-import": "^2.2.0",
@@ -45,7 +45,7 @@
     "stylelint-webpack-plugin": "^0.4.2",
     "supports-color": "^3.1.2",
     "url-loader": "^0.5.7",
-    "webpack": "^2.2.0-rc.1",
+    "webpack": "^2.2.0-rc.2",
     "webpack-dashboard": "^0.2.0",
     "webpack-dev-middleware": "^1.9.0",
     "webpack-hot-middleware": "^2.13.2"

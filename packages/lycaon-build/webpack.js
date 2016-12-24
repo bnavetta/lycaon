@@ -1,3 +1,4 @@
+const fs = require('fs');
 const webpack = require('webpack');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
@@ -12,7 +13,7 @@ const AssetManifestPlugin = require('./AssetManifestPlugin');
 const isProd = process.env.NODE_ENV === 'production';
 const isDev = process.env.NODE_ENV === 'development';
 
-function cssLoader() {
+function cssLoader(loaders) {
     if (isProd) {
         return ExtractTextPlugin.extract({
             fallback: 'style-loader',
@@ -21,12 +22,11 @@ function cssLoader() {
                     loader: 'css-loader',
                     query: {
                         localIdentName: '[hash:base64:16]',
-                        modules: true,
-                        importLoaders: 1
+                        modules: config.features.cssModules,
+                        importLoaders: loaders.length
                     },
-                },
-                { loader: 'postcss-loader' }
-            ]
+                }
+            ].concat(loaders)
         });
     } else {
         return [
@@ -34,15 +34,43 @@ function cssLoader() {
             {
                 loader: 'css-loader',
                 query: {
-                    modules: true,
+                    modules: config.features.cssModules,
                     sourceMap: true,
                     localIdentName: '[local]__[path][name]',
-                    importLoaders: 1,
+                    importLoaders: loaders.lengtn,
                 },
-            },
-            { loader: 'postcss-loader' },
-        ];
+            }
+        ].concat(loaders);
     }
+}
+
+function sassRule() {
+    if (!config.features.sass) {
+        return undefined;
+    }
+
+    return {
+        test: /\.scss$/,
+        loader: cssLoader([
+            { loader: 'postcss-loader' },
+            { loader: 'resolve-url-loader' },
+            {
+                loader: 'sass-loader',
+                query: {
+                    sourceMap: true,
+                    includePaths: [paths.src]
+                }
+            }
+        ]),
+        exclude: /node_modules/
+    };
+}
+
+function cssRule() {
+    return {
+        test: /\.css$/,
+        loader: cssLoader([{ loader: 'postcss-loader' }])
+    };
 }
 
 function plugins() {
@@ -78,8 +106,11 @@ function plugins() {
 }
 
 function htmlPlugin() {
-    if (isProd) {
-        return {
+    if (!fs.existsSync(paths.htmlTemplate)) {
+        return undefined;
+    }
+    else if (isProd) {
+        return new HtmlWebpackPlugin({
             inject: true,
             template: paths.htmlTemplate,
             removeComments: true,
@@ -92,12 +123,12 @@ function htmlPlugin() {
             minifyJS: true,
             minifyCSS: true,
             minifyURLs: true,
-        }
+        });
     } else {
-        return {
+        return new HtmlWebpackPlugin({
             inject: true,
             template: paths.htmlTemplate
-        }
+        });
     }
 }
 
@@ -113,7 +144,7 @@ function output() {
     } else {
         output.filename = '[name].js';
         output.chunkFilename = '[name].chunk.js';
-        output.publicPath = '/';
+        output.publicPath = 'http://localhost:' + (process.env.PORT || '8080') + '/';
     }
 
     return output;
@@ -122,7 +153,10 @@ function output() {
 function entry() {
     let entryBase = [];
     if (isDev) {
-        entryBase.push('react-hot-loader/patch', 'webpack-hot-middleware/client')
+        entryBase.push(
+            'react-hot-loader/patch',
+            'webpack-hot-middleware/client?path=http://localhost:' + (process.env.PORT || '8080') + '/__webpack_hmr'
+        )
     }
 
     return _.mapValues(config.entry, function (entry) {
@@ -140,10 +174,15 @@ const baseConfig = {
     output: output(),
 
     module: {
-        rules: [
+        rules: _.compact([
             {
                 test: /\.jsx?$/,
-                use: { loader: 'eslint-loader' },
+                use: {
+                    loader: 'eslint-loader',
+                    query: {
+                        failOnError: isProd,
+                    }
+                },
                 include: paths.src,
                 enforce: 'pre',
             },
@@ -160,14 +199,12 @@ const baseConfig = {
                 include: paths.src,
             },
 
-            {
-                test: /\.css$/,
-                loader: cssLoader(),
-            },
+            cssRule(),
+            sassRule(),
 
             {
                 test: /\.json$/,
-                use: { loader: 'json-loadder' },
+                use: { loader: 'json-loader' },
             },
 
             {
@@ -176,6 +213,7 @@ const baseConfig = {
                     /\.jsx?$/,
                     /\.css$/,
                     /\.json$/,
+                    /\.scss$/,
                 ],
                 use: {
                     loader: 'url-loader',
@@ -185,7 +223,7 @@ const baseConfig = {
                     },
                 },
             }
-        ]
+        ])
     },
 
     resolve: {
@@ -197,7 +235,7 @@ const baseConfig = {
         modules: [paths.ownNodeModules, paths.nodeModules],
     },
 
-    plugins: [
+    plugins: _.compact([
         new StyleLintPlugin(),
         new FlowStatusWebpackPlugin({
             failOnError: isProd,
@@ -207,7 +245,7 @@ const baseConfig = {
                 }
             },
         }),
-        new HtmlWebpackPlugin(htmlPlugin()),
+        htmlPlugin(),
         new webpack.DefinePlugin({
             'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV)
         }),
@@ -221,8 +259,14 @@ const baseConfig = {
         new webpack.LoaderOptionsPlugin({
             minimize: isProd,
             debug: !isProd,
+            options: {
+                context: paths.root,
+                output: {
+                    path: paths.dist
+                }
+            }
         }),
-    ].concat(plugins()),
+    ]).concat(plugins()),
 
     node: {
         fs: 'empty',

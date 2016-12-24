@@ -23,10 +23,10 @@ function build() {
 
     const compiler = webpack(webpackConfig);
 
-    const bar = new ProgressBar('[:bar] :percent ' + chalk.green(':message') + ' :etas', {
+    const bar = new ProgressBar(':bar :percent ' + chalk.green(':message') + ' :etas', {
         total: 100,
-        complete: '░',
-        incomplete: ' ',
+        complete: '█',
+        incomplete: '░',
     });
     let lastProgress = 0;
     compiler.apply(new ProgressPlugin({
@@ -45,7 +45,8 @@ function build() {
         }
 
         if (stats.compilation.errors.length > 0) {
-            printErrors('Failed to compile.', stats.compilation.errors);
+            printErrors('Compilation errors.', stats.compilation.errors);
+
             process.exit(1);
         }
 

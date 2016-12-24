@@ -1,7 +1,7 @@
 const presets = [
     require.resolve('babel-preset-react'),
     [require('babel-preset-env').default, {
-        targets: process.env.NODE_ENV === 'test' ? { node: 'current' } : { browsers: ['last 2 versions', '> 1%', 'Firefox ESR'] }
+        targets: process.env.NODE_ENV === 'test' ? { node: 'current' } : { browsers: ['last 2 versions', '> 1%', 'Firefox ESR'] },
         modules: false
     }],
     require.resolve('babel-preset-stage-0'),

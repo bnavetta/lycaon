@@ -4,10 +4,18 @@ const mergeWith = require('lodash/mergeWith');
 
 const defaults = {
     entry: {
-        main: paths.entryFile,
+        // main: paths.entryFile,
     },
+    features: {
+        cssModules: true,
+        sass: false
+    }
     // customizeWebpack: (webpackConfig) => webpackConfig
 };
+
+if (fs.existsSync(paths.entryFile)) {
+    defaults.entry.main = paths.entryFile;
+}
 
 if (fs.existsSync(paths.config)) {
     const config = require(paths.config);
@@ -21,9 +29,9 @@ if (fs.existsSync(paths.config)) {
                     newArray.push(item);
                 }
             }
-        }
 
-        return newArray
+            return newArray;
+        }
     });
 } else {
     module.exports = defaults;

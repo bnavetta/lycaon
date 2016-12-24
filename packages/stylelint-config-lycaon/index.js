@@ -2,6 +2,9 @@ module.exports = {
     extends: require.resolve('stylelint-config-standard'),
 
     rules: {
+        // Indentation
+        "indentation": 4,
+
         // Quotes
         'font-family-name-quotes': 'always-where-recommended',
         'function-url-quotes': 'always',
