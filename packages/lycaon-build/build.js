@@ -2,9 +2,12 @@ process.env.NODE_ENV = 'production';
 
 const chalk = require('chalk');
 const del = require('del');
+const fs = require('fs-extra');
 const ProgressBar = require('progress');
 const webpack = require('webpack');
+const path = require('path');
 const ProgressPlugin = require('webpack/lib/ProgressPlugin');
+
 const webpackConfig = require('./webpack');
 const paths = require('./paths');
 
@@ -52,9 +55,6 @@ function build() {
 
         if (stats.compilation.warnings.length > 0) {
             printErrors('Compilation warnings.', stats.compilation.warnings);
-            if (process.env.CI) {
-                process.exit(1);
-            }
         }
 
         console.log(stats.toString({
@@ -62,6 +62,8 @@ function build() {
             exclude: ['node_modules'],
             colors: require('supports-color')
         }));
+
+        fs.outputJsonSync(path.join(paths.dist, 'stats.json'), stats.toJson());
 
         console.log(chalk.green('Compiled successfully.'));
     });

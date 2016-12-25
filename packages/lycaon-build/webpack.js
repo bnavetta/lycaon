@@ -141,6 +141,7 @@ function output() {
     if (isProd) {
         output.filename = '[name].[chunkhash].js';
         output.chunkFilename = '[name].[chunkhash].chunk.js';
+        output.publicPath = '/';
     } else {
         output.filename = '[name].js';
         output.chunkFilename = '[name].chunk.js';
@@ -172,6 +173,8 @@ const baseConfig = {
 
     entry: entry(),
     output: output(),
+
+    profile: true,
 
     module: {
         rules: _.compact([
@@ -254,7 +257,8 @@ const baseConfig = {
             emitToFile: isDev,
         }),
         new webpack.optimize.CommonsChunkPlugin({
-            name: 'common'
+            name: 'common',
+            minChunks: Math.max(Math.floor(config.entry.length / 2), 3)
         }),
         new webpack.LoaderOptionsPlugin({
             minimize: isProd,
