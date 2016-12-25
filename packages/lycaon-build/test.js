@@ -9,10 +9,6 @@ const paths = require('./paths');
 function test() {
     const argv = process.argv.slice(2);
 
-    if (!process.env.CI && argv.indexOf('--coverage') < 0) {
-        argv.push('--watch');
-    }
-
     const jestConfig = {
         collectCoverageFrom: ['src/**/*.{js,jsx}'],
         setupFiles: fs.existsSync(paths.testSetup) ? '<rootDir>/src/testSetup.js' : undefined,
