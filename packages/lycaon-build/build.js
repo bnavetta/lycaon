@@ -1,15 +1,17 @@
 process.env.NODE_ENV = 'production';
 
+const path = require('path');
+const paths = require('./paths');
+process.env.NODE_PATH = paths.ownNodeModules + path.delimiter + process.env.NODE_PATH;
+
 const chalk = require('chalk');
 const del = require('del');
 const fs = require('fs-extra');
 const ProgressBar = require('progress');
 const webpack = require('webpack');
-const path = require('path');
 const ProgressPlugin = require('webpack/lib/ProgressPlugin');
 
 const webpackConfig = require('./webpack');
-const paths = require('./paths');
 
 // From create-react-app
 function printErrors(summary, errors) {

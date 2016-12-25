@@ -195,7 +195,7 @@ const baseConfig = {
                 use: {
                     loader: 'babel-loader',
                     options: {
-                        presets: 'lycaon',
+                        presets: require.resolve('babel-preset-lycaon'),
                         cacheDirectory: true,
                     },
                 },
