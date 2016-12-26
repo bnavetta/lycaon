@@ -225,7 +225,7 @@ const baseConfig = {
                     /\.(jpg|jpeg|png|gif)$/,
                     /\.(eot|svg|ttf|woff|woff2)$/,
                     /\.(mp4|webm)$/,
-                ].concat(config.assetPatterns)
+                ].concat(config.assetPatterns),
                 use: {
                     loader: 'url-loader',
                     options: {
