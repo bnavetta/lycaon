@@ -69,7 +69,8 @@ function sassRule() {
 function cssRule() {
     return {
         test: /\.css$/,
-        loader: cssLoader([{ loader: 'postcss-loader' }])
+        loader: cssLoader([{ loader: 'postcss-loader' }]),
+        exclude: /node_modules/
     };
 }
 
@@ -206,18 +207,25 @@ const baseConfig = {
             sassRule(),
 
             {
+                test: /\.css$/,
+                include: /node_modules/,
+                use: [
+                    { loader: 'style-loader' },
+                    { loader: 'css-loader' },
+                ],
+            },
+
+            {
                 test: /\.json$/,
                 use: { loader: 'json-loader' },
             },
 
             {
-                exclude: [
-                    /\.html$/,
-                    /\.jsx?$/,
-                    /\.css$/,
-                    /\.json$/,
-                    /\.scss$/,
-                ],
+                include: [
+                    /\.(jpg|jpeg|png|gif)$/,
+                    /\.(eot|svg|ttf|woff|woff2)$/,
+                    /\.(mp4|webm)$/,
+                ].concat(config.assetPatterns)
                 use: {
                     loader: 'url-loader',
                     options: {

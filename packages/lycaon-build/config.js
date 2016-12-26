@@ -9,7 +9,8 @@ const defaults = {
     features: {
         cssModules: true,
         sass: false
-    }
+    },
+    assetPatterns: [], // list of includes for file types to process with url-loader
     // customizeWebpack: (webpackConfig) => webpackConfig
 };
 

@@ -36,6 +36,7 @@ module.exports = {
         cssModules: true, // whether or not to enable CSS Modules
         sass: true // enable Sass (need to install node-sass, sass-loader, and resolve-url-loader)
     },
+    assetPatterns: [/\.csv$/], // Additional file types to handle with url-loader (common types included by default)
     customizeWebpack: function (webpackConfig) {
         // make any other changes here
         return webpackConfig;
