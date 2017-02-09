@@ -4,6 +4,7 @@ const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const StyleLintPlugin = require('stylelint-webpack-plugin');
 const FlowStatusWebpackPlugin = require('flow-status-webpack-plugin');
+const flow = require('flow-bin');
 const _ = require('lodash');
 
 const paths = require('./paths');
@@ -17,7 +18,7 @@ function cssLoader(loaders) {
     if (isProd) {
         return ExtractTextPlugin.extract({
             fallback: 'style-loader',
-            loader: [
+            use: [
                 {
                     loader: 'css-loader',
                     query: {
@@ -249,6 +250,7 @@ const baseConfig = {
     plugins: _.compact([
         new StyleLintPlugin(),
         new FlowStatusWebpackPlugin({
+			binaryPath: flow,
             failOnError: isProd,
             onError: function (stdout) {
                 if (!isProd) { // failOnError logs it anyways
